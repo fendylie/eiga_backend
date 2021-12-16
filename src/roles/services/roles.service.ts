@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from './entities/role.entity';
+import { Role } from '../entities/role.entity';
 import { Repository } from 'typeorm';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { CreateRoleDto } from '../dto/create-role.dto';
+import { UpdateRoleDto } from '../dto/update-role.dto';
 
 @Injectable()
 export class RolesService {
@@ -17,7 +17,11 @@ export class RolesService {
   }
 
   async findOne(id: string): Promise<Role> {
-    return await this.rolesRepository.findOne(id);
+    const role = await this.rolesRepository.findOne(id);
+    if (!role) {
+      throw new NotFoundException();
+    }
+    return role;
   }
 
   async create(createRoleDto: CreateRoleDto) {
@@ -27,10 +31,20 @@ export class RolesService {
   }
 
   async update(id: string, updateRoleDto: UpdateRoleDto) {
+    const role = await this.rolesRepository.findOne(id);
+    if (!role) {
+      throw new NotFoundException();
+    }
+
     return await this.rolesRepository.update(id, updateRoleDto);
   }
 
   async delete(id: string): Promise<void> {
+    const role = await this.rolesRepository.findOne(id);
+    if (!role) {
+      throw new NotFoundException();
+    }
+
     await this.rolesRepository.softDelete(id);
   }
 }

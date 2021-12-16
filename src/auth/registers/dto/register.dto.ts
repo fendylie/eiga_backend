@@ -1,12 +1,8 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { OneToOne } from 'typeorm';
-import { Role } from '../../roles/entities/role.entity';
+import { Role } from '../../../roles/entities/role.entity';
 
-export class CreateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-
+export class RegisterDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
@@ -18,6 +14,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
   @IsNotEmpty()
   @OneToOne(() => Role, (role) => role.id)

@@ -15,6 +15,9 @@ export class Role {
   @Column({ nullable: true })
   name: string;
 
+  @Column({ nullable: true })
+  permissions: string[];
+
   @CreateDateColumn()
   createdAt?: Date;
 
