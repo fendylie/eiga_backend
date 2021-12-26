@@ -8,15 +8,21 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Role {
+export class Movie {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true })
-  name: string;
+  title: string;
 
   @Column({ nullable: true })
-  permissions: string[];
+  description: string;
+
+  @Column({ nullable: true })
+  image: string;
+
+  @Column({ nullable: true })
+  publishDate: string;
 
   @CreateDateColumn()
   createdAt?: Date;

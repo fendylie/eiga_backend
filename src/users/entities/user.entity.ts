@@ -24,8 +24,8 @@ export class User {
   @Column({ nullable: true })
   password: string;
 
-  @Column('uuid')
-  roleId: string;
+  @Column({ default: false })
+  isAdmin: boolean;
 
   @Column({ default: true })
   isActive: boolean;

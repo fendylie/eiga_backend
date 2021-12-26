@@ -7,6 +7,7 @@ import {
   comparePassword,
   hashPassword,
 } from '../../@utils/helpers/bcrypt.helper';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -34,14 +35,14 @@ export class UsersService {
       email,
       name,
       username,
-      roleId,
+      isAdmin,
     } = createUserDto;
 
     return await this.usersRepository.save({
       email,
       name,
       username,
-      roleId,
+      isAdmin,
       password: await hashPassword(plainPassword),
     });
   }
@@ -68,6 +69,15 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.usersRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return await this.usersRepository.update(id, updateUserDto);
   }
 
   async remove(id: string): Promise<void> {

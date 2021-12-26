@@ -1,6 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { OneToOne } from 'typeorm';
-import { Role } from '../../../roles/entities/role.entity';
+import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class RegisterDto {
   @IsNotEmpty()
@@ -20,6 +18,6 @@ export class RegisterDto {
   name: string;
 
   @IsNotEmpty()
-  @OneToOne(() => Role, (role) => role.id)
-  roleId: string;
+  @IsBoolean()
+  isAdmin: boolean;
 }
