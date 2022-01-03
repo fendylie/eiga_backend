@@ -1,20 +1,20 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   Param,
   Post,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { MoviesService } from '../services/movies.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import path, { join } from 'path';
+import { join, parse } from 'path';
 import e from 'express';
-import { of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateMovieDto } from '../dto/create-movie.dto';
 
 export const storage = {
   storage: diskStorage({
@@ -25,8 +25,8 @@ export const storage = {
       callback: (error: Error | null, filename: string) => void,
     ) => {
       const filename: string =
-        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-      const extension: string = path.parse(file.originalname).ext;
+        parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = parse(file.originalname).ext;
 
       callback(null, `${filename}${extension}`);
     },
@@ -37,39 +37,47 @@ export const storage = {
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
-  // @Post()
-  // create(@Body() createMovieDto: CreateMovieDto) {
-  //   return this.moviesService.create(createMovieDto);
-  // }
-
   @Get()
-  findAll() {
-    return this.moviesService.findAll();
+  async findAll() {
+    return await this.moviesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.moviesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const movie = await this.moviesService.findOne(id);
+    const { url } = this.findMovieImage(movie.image);
+
+    return {
+      ...movie,
+      image: {
+        name: movie.image,
+        url,
+      },
+    };
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateMovieDto: UpdateMovieDto) {
-  //   return this.moviesService.update(id, updateMovieDto);
-  // }
+  @Post()
+  async create(@Body() createMovieDto: CreateMovieDto) {
+    return await this.moviesService.create(createMovieDto);
+  }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFile(@UploadedFile() file) {
-    return of({ imagePath: file.fileName });
+    return {
+      imagePath: file.filename,
+    };
   }
 
-  @Get('movie-image/:name')
-  findMovieImage(@Param('name') name, @Res() res) {
-    return of(res.sendFile(join(process.cwd(), 'uploads/movieImages/' + name)));
+  @Get('image/:name')
+  findMovieImage(@Param('name') name) {
+    return {
+      url: join(process.cwd(), 'uploads/movieImages/' + name),
+    };
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.moviesService.delete(id);
+  async delete(@Param('id') id: string) {
+    return await this.moviesService.delete(id);
   }
 }

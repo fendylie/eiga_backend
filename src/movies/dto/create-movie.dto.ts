@@ -12,4 +12,8 @@ export class CreateMovieDto {
   @IsNotEmpty()
   @IsDate()
   publishDate: string;
+
+  @IsNotEmpty()
+  @IsString()
+  image: string;
 }
