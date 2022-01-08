@@ -1,9 +1,14 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { useContainer } from 'class-validator';
 
-async function bootstrap() {
+(async function () {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('v1');
-  await app.listen(3000);
-}
-bootstrap();
+  app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true }));
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
+  await app.listen(process.env.PORT || 3000);
+})();

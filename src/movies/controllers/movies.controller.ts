@@ -33,7 +33,7 @@ export const storage = {
   }),
 };
 
-@Controller('movies')
+@Controller('movie')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
