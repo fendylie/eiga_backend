@@ -11,11 +11,11 @@ import { Movie } from './movies/entities/movie.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'eiga',
+      host: process.env.DATABASE_HOST || 'localhost',
+      port: +process.env.DATABASE_PORT || 3306,
+      username: process.env.DATABASE_USERNAME || 'root',
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME || 'eiga',
       namingStrategy: new SnakeNamingStrategy(),
       entities: [User, Movie],
       synchronize: !['production'].includes(process.env.NODE_ENV),
