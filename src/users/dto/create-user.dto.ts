@@ -16,8 +16,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   password: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  isAdmin: boolean;
 }

@@ -7,7 +7,7 @@ export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
   @Post()
-  login(@Body() registerDto: LoginDto) {
-    return this.loginService.login(registerDto);
+  async login(@Body() registerDto: LoginDto) {
+    return await this.loginService.login(registerDto);
   }
 }

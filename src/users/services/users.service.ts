@@ -30,19 +30,12 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const {
-      password: plainPassword,
-      email,
-      name,
-      username,
-      isAdmin,
-    } = createUserDto;
+    const { password: plainPassword, email, name, username } = createUserDto;
 
     return await this.usersRepository.save({
       email,
       name,
       username,
-      isAdmin,
       password: await hashPassword(plainPassword),
     });
   }
@@ -50,10 +43,10 @@ export class UsersService {
   async findOneByEmailAndPassword(
     email: string,
     password: string,
-  ): Promise<User> {
+  ): Promise<User | boolean> {
     const user = await this.usersRepository.findOne({ email });
     if (!user || !(await comparePassword(user.password, password))) {
-      throw new NotFoundException();
+      return false;
     }
 
     return user;
@@ -62,10 +55,10 @@ export class UsersService {
   async findOneByUsernameAndPassword(
     username: string,
     password: string,
-  ): Promise<User> {
+  ): Promise<User | boolean> {
     const user = await this.usersRepository.findOne({ username });
     if (!user || !(await comparePassword(user.password, password))) {
-      throw new NotFoundException();
+      return false;
     }
 
     return user;

@@ -6,6 +6,7 @@ import { RegisterController } from './controllers/register.controller';
 
 @Module({
   imports: [UsersModule],
+  controllers: [RegisterController],
   providers: [RegisterController, RegisterService],
 })
 export class RegisterModule {}

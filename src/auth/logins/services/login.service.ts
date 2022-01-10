@@ -7,24 +7,27 @@ import { User } from '../../../users/entities/user.entity';
 export class LoginService {
   constructor(private readonly usersService: UsersService) {}
 
-  async login(loginDto: LoginDto): Promise<User> {
+  async login(loginDto: LoginDto): Promise<User | boolean> {
     const findUserByEmail = await this.usersService.findOneByEmailAndPassword(
       loginDto.username,
-      loginDto.username,
+      loginDto.password,
     );
-    const findUserByUsername =
-      await this.usersService.findOneByUsernameAndPassword(
-        loginDto.username,
-        loginDto.username,
-      );
 
-    if (!findUserByEmail && !findUserByUsername) {
-      throw new BadRequestException(
-        'These credentials do not match our records.',
-      );
+    if (!findUserByEmail) {
+      const findUserByUsername =
+        await this.usersService.findOneByUsernameAndPassword(
+          loginDto.username,
+          loginDto.password,
+        );
+
+      if (!findUserByUsername) {
+        throw new BadRequestException(
+          'These credentials do not match our records.',
+        );
+      } else {
+        return findUserByUsername;
+      }
     }
-
-    if (findUserByUsername) return findUserByUsername;
 
     return findUserByEmail;
   }
