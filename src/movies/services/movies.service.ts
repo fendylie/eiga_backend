@@ -3,6 +3,7 @@ import { Movie } from '../entities/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMovieDto } from '../dto/create-movie.dto';
+import { UpdateMovieDto } from '../dto/update-movie.dto';
 
 @Injectable()
 export class MoviesService {
@@ -32,6 +33,10 @@ export class MoviesService {
       throw new NotFoundException();
     }
     return movie;
+  }
+
+  async update(id: string, updateMovieDto: UpdateMovieDto) {
+    return await this.moviesRepository.update(id, updateMovieDto);
   }
 
   async delete(id: string): Promise<void> {

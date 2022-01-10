@@ -10,7 +10,7 @@ export class CreateMovieDto {
   description: string;
 
   @IsNotEmpty()
-  @IsDate()
+  @IsString()
   publishDate: string;
 
   @IsNotEmpty()

@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { join, parse } from 'path';
 import e from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateMovieDto } from '../dto/create-movie.dto';
+import { UpdateMovieDto } from '../dto/update-movie.dto';
 
 export const storage = {
   storage: diskStorage({
@@ -61,6 +63,15 @@ export class MoviesController {
     return await this.moviesService.create(createMovieDto);
   }
 
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateMovieDto: UpdateMovieDto,
+  ) {
+    await this.moviesService.update(id, updateMovieDto);
+    return await this.moviesService.findOne(id);
+  }
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage))
   uploadFile(@UploadedFile() file) {
@@ -78,6 +89,9 @@ export class MoviesController {
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return await this.moviesService.delete(id);
+    await this.moviesService.delete(id);
+    return {
+      message: 'Data successfully deleted',
+    };
   }
 }
